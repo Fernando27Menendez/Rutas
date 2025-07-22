@@ -83,7 +83,7 @@ data class RouteResult(
 
 fun calculateDistance(point1: Point, point2: Point): Double
 {
-    val R = 6371000.0 // Radio de la Tierra en metros
+    val r = 6371000.0 // Radio de la Tierra en metros
 
     val lat1Rad = Math.toRadians(point1.latitude())
     val lat2Rad = Math.toRadians(point2.latitude())
@@ -94,7 +94,7 @@ fun calculateDistance(point1: Point, point2: Point): Double
             cos(lat1Rad) * cos(lat2Rad) * sin(deltaLngRad / 2).pow(2)
     val c = 2 * atan2(sqrt(a), sqrt(1 - a))
 
-    return R * c
+    return r * c
 }
 
 class CampusGraph {
