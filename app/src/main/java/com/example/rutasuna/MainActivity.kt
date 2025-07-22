@@ -21,14 +21,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.material.icons.filled.Search
-import androidx.compose.runtime.*
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
 import com.mapbox.maps.plugin.annotation.generated.PolylineAnnotationOptions
 import com.mapbox.maps.plugin.annotation.generated.PointAnnotationOptions
-import androidx.compose.material3.*
 import androidx.core.content.ContextCompat
 import com.mapbox.geojson.Point
 import com.mapbox.maps.extension.compose.MapboxMap
@@ -56,12 +51,7 @@ data class RouteNode(
     val point: Point,
     val type: NodeType,
     val description: String = ""
-) {
-    // Función para calcular distancia a otro nodo (en metros)
-    fun distanceTo(other: RouteNode): Double {
-        return calculateDistance(this.point, other.point)
-    }
-}
+)
 
 /**
  * Tipos de nodos en el campus
@@ -244,12 +234,11 @@ class CampusGraph {
     /**
      * Obtiene todos los nodos
      */
-    fun getAllNodes(): Map<String, RouteNode> = nodes
 
     /**
      * Obtiene todos los nodos de entrada (puertas)
      */
-    fun getEntranceNodes(): List<RouteNode> {
+    private fun getEntranceNodes(): List<RouteNode> {
         return nodes.values.filter { it.type == NodeType.ENTRANCE }
     }
 
@@ -263,14 +252,14 @@ class CampusGraph {
     /**
      * Obtiene un nodo por su ID
      */
-    fun getNode(nodeId: String): RouteNode? {
+    private fun getNode(nodeId: String): RouteNode? {
         return nodes[nodeId]
     }
 
     /**
      * Obtiene las conexiones desde un nodo específico
      */
-    fun getEdgesFrom(nodeId: String): List<RouteEdge> {
+    private fun getEdgesFrom(nodeId: String): List<RouteEdge> {
         return adjacencyMap[nodeId] ?: emptyList()
     }
 
@@ -434,17 +423,14 @@ class RouteCalculator(private val graph: CampusGraph) {
     ): RouteResult {
         println("🔍 Calculando ruta desde ubicación actual a $destinationNodeId")
 
-        // Primero, verificar si el usuario está dentro del campus
         val nearestNode = graph.findNearestNode(currentLocation)
-        if (nearestNode == null) {
-            return RouteResult(
+            ?: return RouteResult(
                 nodes = emptyList(),
                 totalDistance = 0.0,
                 waypoints = emptyList(),
                 success = false,
                 errorMessage = "No se encontró un punto de referencia cercano"
             )
-        }
 
         val distanceToNearestNode = calculateDistance(currentLocation, nearestNode.point)
         println("📍 Nodo más cercano: ${nearestNode.name} (${distanceToNearestNode.toInt()}m)")
